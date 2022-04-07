@@ -13,6 +13,9 @@ db = pymysql.connect(host="localhost",
                      password="root",
                      db="worker")
 
+sql = "INSERT INTO workerdata(Panic_Alert, time) VALUES(%s,%s)"
+val = ("Emergency", time.strftime("%Y-%m-%d %H:%M:%S"))
+
 count = 0
 
 while 1:
