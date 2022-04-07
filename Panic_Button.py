@@ -14,19 +14,33 @@ db = pymysql.connect(host="localhost",
                      db="worker")
 
 sql = "INSERT INTO workerdata(Panic_Alert, time) VALUES(%s,%s)"
-val = ("Emergency", time.strftime("%Y-%m-%d %H:%M:%S"))
+val = ("Emergency!!", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
 count = 0
 
-while 1:
-    if GPIO.input(button_pin) == GPIO.HIGH:
-        count += 1
-        if count >= 30:
-            print("panic!!")
 
-    else:
-        count = 0
+def main():
+    while 1:
+        if GPIO.input(button_pin) == GPIO.HIGH:
+            count += 1
+            if count >= 30:
+                print("panic!!")
+                cur.execute(sql, val)
+                #commit to DB
+                db.commit()
 
-    time.sleep(0.1)
+        else:
+            count = 0
+
+        time.sleep(0.1)
+
+
+if __name__ == '__main__':
+    try:
+        with db.cursor() as cur:
+            main()
+        pass
+    except KeyboardInterrupt:
+        pass
 
 GPIO.cleanup()
