@@ -37,5 +37,5 @@ try:
         time.sleep(0.05)
 
 except KeyboardInterrupt:
-    wb.save("fastwalking01.xlsx")
+    wb.save("2.8mfall01.xlsx")
     exit(0)
