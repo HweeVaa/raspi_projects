@@ -1,14 +1,31 @@
 import RPi.GPIO as GPIO
 import time
 
-button_pin = 15
+button = 10
 
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-while 1:
-    if GPIO.input(button_pin) == GPIO.HIGH:
-        print("Button pushed!!")
-    time.sleep(0.1)
-GPIO.cleanup()
+def setup():
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(button, GPIO.IN)
+
+
+def loop():
+    while True:
+        button_state = GPIO.input(button)
+        if button_state == False:
+            print("Button Pressed…")
+            while GPIO.input(button) == False:
+                time.sleep(0.2)
+
+
+def endprogram():
+    GPIO.cleanup()
+
+
+if __name__ == '__main__':
+    setup()
+    try:
+        loop()
+    except KeyboardInterrupt:
+        print("keyboard interrupt detected")
+        endprogram()

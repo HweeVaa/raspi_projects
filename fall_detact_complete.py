@@ -6,8 +6,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import openpyxl as op
+import RPi.GPIO as gpio
 
-#핀 정보 세텡
+button_pin = 15
+buzzer = 12
+gpio.setmode(gpio.BCM)
+gpio.setup(buzzer, gpio.OUT)
+gpio.setup(button_pin, gpio.IN, pull_up_down=gpio.PUD_DOWN)
+gpio.setwarnings(False)
+
+pwm1 = gpio.PWM(buzzer, 262)
+pwm1.start(50.0)
+time.sleep(1.5)
+pwm1.stop()
+
+#핀 정보 세팅
 i2c = busio.I2C(board.SCL, board.SDA)
 accelerometer = adafruit_adxl34x.ADXL345(i2c)
 
@@ -36,12 +49,17 @@ try:
                 ReadData()
                 CurrentTime = time.time()
                 SpentTime = CurrentTime - StartTime
-                if AccVar > 1:  #15초 내 움직임이 있을 경우 무효
+                if AccVar > 3:  #15초 내 움직임이 있을 경우 무효
                     SpentTime = 0  #시간 초기화
                     break
             if SpentTime >= 15:  #움직임이 없는 상태로 15초가 흘렀을 경우 Emergency를 반복 출력
                 while True:
                     print("Emergency")
+                    pwm1.start(50.0)
+                    if gpio.input(button_pin) == gpio.HIGH:  #푸시 버튼 누르면 리셋
+                        SpentTime = 0
+                        pwm1.stop()
+                        break
 
 except KeyboardInterrupt:
     exit(0)
