@@ -3,9 +3,7 @@ import board
 import busio
 import adafruit_adxl34x
 import numpy as np
-import matplotlib.pyplot as plt
 import math
-import openpyxl as op
 import RPi.GPIO as gpio
 
 button_pin = 15
